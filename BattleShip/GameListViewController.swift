@@ -27,7 +27,14 @@ class GameListViewController: UIViewController, UITableViewDelegate, UITableView
         self.gameListView.registerClass(UITableViewCell.self, forCellReuseIdentifier: NSStringFromClass(UITableViewCell.self))
         gameListView.dataSource = self
         gameListView.delegate = self
+        let value = UIInterfaceOrientation.Portrait.rawValue
+        UIDevice.currentDevice().setValue(value, forKey: "orientation")
     }
+    
+    override func shouldAutorotate() -> Bool {
+        return true
+    }
+    
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return gameList.gamesCount

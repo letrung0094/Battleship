@@ -18,28 +18,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
-//        gameListcontroller = GameListViewController()
-//        gameListcontroller.title = "List Of Games"
-//        
-//        let color = UIColor(red: 38.0/255.0, green: 191.0/255.0, blue: 199.0/255.0, alpha: 1.0)
-//        
-//        navBar = UINavigationController(rootViewController: gameListcontroller)
-//        navBar.navigationBar.barTintColor = color
-//        navBar.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
-//        
-//        let rightButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "newGame")
-//        gameListcontroller.navigationItem.rightBarButtonItem = rightButton
-//        navBar.navigationBar.tintColor = UIColor.whiteColor()
-//        
-//        window = UIWindow(frame: UIScreen.mainScreen().bounds)
-//        window?.makeKeyAndVisible()
-//        window?.rootViewController = navBar
-
-        let gameController = GameViewController()
+        gameListcontroller = GameListViewController()
+        gameListcontroller.title = "List Of Games"
+        
+        let color = UIColor(red: 38.0/255.0, green: 191.0/255.0, blue: 199.0/255.0, alpha: 1.0)
+        
+        navBar = UINavigationController(rootViewController: gameListcontroller)
+        navBar.navigationBar.barTintColor = color
+        navBar.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
+        
+        let rightButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "newGame")
+        gameListcontroller.navigationItem.rightBarButtonItem = rightButton
+        navBar.navigationBar.tintColor = UIColor.whiteColor()
+        
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         window?.makeKeyAndVisible()
-        window?.rootViewController = gameController
-        
+        window?.rootViewController = navBar
+
+//        let gameController = GameViewController()
+//        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+//        window?.makeKeyAndVisible()
+//        window?.rootViewController = gameController
+//        
         return true
     }
     
