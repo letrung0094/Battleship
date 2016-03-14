@@ -42,6 +42,7 @@ class BattleField: UIView{
         audioPlayer.prepareToPlay()
     }
     
+    //Creates a cover sheet with appropriate message
     func createCoverSheet(s:String){
         if cover == nil{
             cover = CoverSheet(frame: CGRectMake(0, 0, 520, 250))
@@ -63,11 +64,14 @@ class BattleField: UIView{
         addSubview(cover)
     }
     
+    //Loads an old game
     func loadGame(gameToLoad: Game){
         game = gameToLoad
     }
     
+    //Create water tiles and ship tiles for player 1
     func createPlayer1Grid(){
+        //Create water tiles
         for var i = 0; i < 5; i++ {
             for var j = 0; j < 5; j++ {
                 let waterGrid = Grid(frame: CGRectMake(CGFloat(50 * i), CGFloat(50 * j), 50, 50))
@@ -75,7 +79,7 @@ class BattleField: UIView{
                 addSubview(waterGrid)
             }
         }
-        
+        //Create ship tiles
         for var i = 0; i < game.player1Ships.count; i++ {
             let shipTemp = game.player1Ships[i]
             let player1Grid = Player1Grid(frame: CGRectMake(CGFloat(50 * shipTemp.positionX), CGFloat(50 * shipTemp.positionY), 50, 50))
@@ -86,7 +90,9 @@ class BattleField: UIView{
         
     }
     
+    //Create water tiles and ship tiles for player 2
     func createPlayer2Grid(){
+        //Create water tiles
         for var i = 0; i < 5; i++ {
             for var j = 0; j < 5; j++ {
                 let waterGrid = Grid(frame: CGRectMake(frame.width/2 + CGFloat(50 * i) + 10, CGFloat(50 * j), 50, 50))
@@ -94,7 +100,7 @@ class BattleField: UIView{
                 addSubview(waterGrid)
             }
         }
-        
+        //Create ship tiles
         for var i = 0; i < game.player2Ships.count; i++ {
             let shipTemp = game.player2Ships[i]
             let player2Grid = Player2Grid(frame: CGRectMake(frame.width/2 + CGFloat(50 * shipTemp.positionX) + 10, CGFloat(50 * shipTemp.positionY), 50, 50))
@@ -104,6 +110,7 @@ class BattleField: UIView{
         }
     }
     
+    //Hide all of player 1's ships when its player 2's turn
     func hideActivePlayer1Ships(){
         for var i = 0; i < game.player1Ships.count; i++ {
             let shipTemp = game.player1Ships[i]
@@ -111,6 +118,7 @@ class BattleField: UIView{
         }
     }
     
+    //Same as above but vice versa
     func hideActivePlayer2Ships(){
         for var i = 0; i < game.player2Ships.count; i++ {
             let shipTemp = game.player2Ships[i]
@@ -118,6 +126,7 @@ class BattleField: UIView{
         }
     }
     
+    //Show player 1's ships for player 1's turn
     func showActivePlayer1Ships(){
         for var i = 0; i < game.player1Ships.count; i++ {
             let shipTemp = game.player1Ships[i]
@@ -125,6 +134,7 @@ class BattleField: UIView{
         }
     }
     
+    //Same as above but vice versa
     func showActivePlayer2Ships(){
         for var i = 0; i < game.player2Ships.count; i++ {
             let shipTemp = game.player2Ships[i]
@@ -132,6 +142,7 @@ class BattleField: UIView{
         }
     }
     
+    //After a succesful touch, display m
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesBegan(touches, withEvent: event)
         if validTouch == true {
@@ -169,9 +180,9 @@ class BattleField: UIView{
         let touch: UITouch = touches.first!
         let touchPoint: CGPoint = touch.locationInView(self)
         
+        //To get exact coordinates
         let x = floor(touchPoint.x / 50.0)
         let y = floor(touchPoint.y / 50.0)
-        
         
         //Player 1 turn
         if game.turn == 0 && coverHidden == true {
