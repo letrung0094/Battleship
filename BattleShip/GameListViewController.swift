@@ -29,6 +29,13 @@ class GameListViewController: UIViewController, UITableViewDelegate, UITableView
         gameListView.delegate = self
         let value = UIInterfaceOrientation.Portrait.rawValue
         UIDevice.currentDevice().setValue(value, forKey: "orientation")
+        
+        let tempGame = Game()
+        tempGame.gameID = 0
+        tempGame.createRandomPlayer1Ships()
+        tempGame.createRandomPlayer2Ships()
+        tempGame.createBattleField()
+        gameList.addGame(tempGame)
     }
     
     override func shouldAutorotate() -> Bool {
@@ -40,12 +47,21 @@ class GameListViewController: UIViewController, UITableViewDelegate, UITableView
         return gameList.gamesCount
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        return UITableViewCell()
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    {
+        let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(UITableViewCell.self))!
+        cell.textLabel?.text = "Game \(indexPath.section)"
+        
+        return cell
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        print(indexPath.section)
         
+        let game = gameList.accessGame(indexPath.section)
+        let newGameScreen = GameViewController()
+        newGameScreen.loadGame(game)
+        navigationController?.pushViewController(newGameScreen, animated: true)
     }
   
     

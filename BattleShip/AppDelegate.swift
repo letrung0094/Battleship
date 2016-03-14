@@ -34,12 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         window?.makeKeyAndVisible()
         window?.rootViewController = navBar
-
-//        let gameController = GameViewController()
-//        window = UIWindow(frame: UIScreen.mainScreen().bounds)
-//        window?.makeKeyAndVisible()
-//        window?.rootViewController = gameController
-//        
+  
         return true
     }
     

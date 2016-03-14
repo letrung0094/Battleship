@@ -40,8 +40,8 @@ class Game{
     //0 = player 1 turn, 1 = player 2 turn
     var turn: Int!
     var gameID: Int!
-    var player1Ships = [Int: Ship]()
-    var player2Ships = [Int: Ship]()
+    var player1Ships = [Ship]()
+    var player2Ships = [Ship]()
     var numberOfGridColumns = 6
     var numberOfGridRows = 6
     
@@ -49,31 +49,69 @@ class Game{
         turn = 0
     }
     
-    func shootAt(x: Int, y: Int){
-
+    func shootAt(x: Int, y: Int) -> Bool{
+        if turn == 0{
+            for var i = 0; i < player2Ships.count; i++ {
+                let temp = player2Ships[i]
+                if temp.positionX == x % 5 && temp.positionY == y % 5{
+                    player2Ships.removeAtIndex(i)
+                    switchTurn()
+                    return didHit()
+                }
+            }
+            switchTurn()
+            return false
+        }
+        else{
+            for var i = 0; i < player1Ships.count; i++ {
+                let temp = player1Ships[i]
+                if temp.positionX == x && temp.positionY == y{
+                    player1Ships.removeAtIndex(i)
+                    switchTurn()
+                    return didHit()
+                }
+            }
+            switchTurn()
+            return false
+        }
+        
     }
     
     func didHit() -> Bool{
         return true
     }
     
-    func removeShip(shipIDToRemove: Int){
-        //Currently player 1 turn
-        if turn == 0{
-            player2Ships.removeValueForKey(shipIDToRemove)
-        }
-        //Player 2 turn
-        else{
-            player1Ships.removeValueForKey(shipIDToRemove)
+    func createRandomPlayer1Ships(){
+        turn = 0
+        for var i = 0; i < 5; i++ {
+            let ship = Ship()
+            ship.updatePosition(Int(arc4random_uniform(5)), y: Int(arc4random_uniform(5)))
+            ship.shipID = i
+            ship.shipSize = 1
+            ship.updateShipID(i+10)
+            addNewShip(ship)
         }
     }
     
+    func createRandomPlayer2Ships(){
+        turn = 1
+        for var i = 0; i < 5; i++ {
+            let ship = Ship()
+            ship.updatePosition(Int(arc4random_uniform(5)), y: Int(arc4random_uniform(5)))
+            ship.shipID = i
+            ship.shipSize = 1
+            ship.updateShipID(i+20)
+            addNewShip(ship)
+        }
+    }
+    
+    
     func addNewShip(newShip: Ship){
         if turn == 0{
-            player1Ships[newShip.shipID] = newShip
+            player1Ships.append(newShip)
         }
         else{
-            player2Ships[newShip.shipID] = newShip
+            player2Ships.append(newShip)
         }
     }
     
@@ -130,6 +168,42 @@ class Player2Grid: Grid{
         super.drawRect(rect)
         
         UIImage(named: "Player2Ships")?.drawInRect(self.bounds)
+        UIGraphicsBeginImageContext(self.frame.size)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        self.backgroundColor = UIColor(patternImage: image)
+    }
+}
+
+class Player1GridDestroyed: Grid{
+    override func drawRect(rect:CGRect){
+        super.drawRect(rect)
+        
+        UIImage(named: "Player1ShipOnFire")?.drawInRect(self.bounds)
+        UIGraphicsBeginImageContext(self.frame.size)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        self.backgroundColor = UIColor(patternImage: image)
+    }
+}
+
+class Player2GridDestroyed: Grid{
+    override func drawRect(rect:CGRect){
+        super.drawRect(rect)
+        
+        UIImage(named: "Player2ShipOnFire")?.drawInRect(self.bounds)
+        UIGraphicsBeginImageContext(self.frame.size)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        self.backgroundColor = UIColor(patternImage: image)
+    }
+}
+
+class WaterDestroyed: Grid{
+    override func drawRect(rect:CGRect){
+        super.drawRect(rect)
+        
+        UIImage(named: "WaterOnFire")?.drawInRect(self.bounds)
         UIGraphicsBeginImageContext(self.frame.size)
         let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()

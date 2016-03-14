@@ -15,6 +15,8 @@
 		91BA59301C94FCE4007CA4B7 /* GameListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BA592F1C94FCE4007CA4B7 /* GameListViewController.swift */; };
 		91BA59321C94FD27007CA4B7 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BA59311C94FD27007CA4B7 /* GameViewController.swift */; };
 		91BA59341C950996007CA4B7 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 91BA59331C950996007CA4B7 /* Default-568h@2x.png */; };
+		91EE56AB1C960D5000E3D949 /* BattleField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91EE56AA1C960D5000E3D949 /* BattleField.swift */; };
+		91EE56AD1C963DC800E3D949 /* CoverSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91EE56AC1C963DC800E3D949 /* CoverSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		91BA592F1C94FCE4007CA4B7 /* GameListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameListViewController.swift; sourceTree = "<group>"; };
 		91BA59311C94FD27007CA4B7 /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		91BA59331C950996007CA4B7 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		91EE56AA1C960D5000E3D949 /* BattleField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BattleField.swift; sourceTree = "<group>"; };
+		91EE56AC1C963DC800E3D949 /* CoverSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoverSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +110,8 @@
 				91BA590B1C94F6D3007CA4B7 /* Info.plist */,
 				91BA592F1C94FCE4007CA4B7 /* GameListViewController.swift */,
 				91BA59311C94FD27007CA4B7 /* GameViewController.swift */,
+				91EE56AA1C960D5000E3D949 /* BattleField.swift */,
+				91EE56AC1C963DC800E3D949 /* CoverSheet.swift */,
 			);
 			path = BattleShip;
 			sourceTree = "<group>";
@@ -261,6 +267,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91EE56AB1C960D5000E3D949 /* BattleField.swift in Sources */,
+				91EE56AD1C963DC800E3D949 /* CoverSheet.swift in Sources */,
 				91BA59321C94FD27007CA4B7 /* GameViewController.swift in Sources */,
 				91BA59001C94F6D3007CA4B7 /* AppDelegate.swift in Sources */,
 				91BA59301C94FCE4007CA4B7 /* GameListViewController.swift in Sources */,
@@ -472,6 +480,7 @@
 				91BA59261C94F6D3007CA4B7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		91BA59271C94F6D3007CA4B7 /* Build configuration list for PBXNativeTarget "BattleShipTests" */ = {
 			isa = XCConfigurationList;
@@ -480,6 +489,7 @@
 				91BA59291C94F6D3007CA4B7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		91BA592A1C94F6D3007CA4B7 /* Build configuration list for PBXNativeTarget "BattleShipUITests" */ = {
 			isa = XCConfigurationList;
@@ -488,6 +498,7 @@
 				91BA592C1C94F6D3007CA4B7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
