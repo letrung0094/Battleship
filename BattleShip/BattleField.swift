@@ -9,13 +9,17 @@
 import Foundation
 import UIKit
 import Darwin
+import SpriteKit
+import AVFoundation
 
 class BattleField: UIView{
     var game: Game!
     var cover: CoverSheet!
     var validTouch: Bool = false
     var coverHidden: Bool = false
-    
+    var audioPlayer = AVAudioPlayer()
+    let bombSound = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("Explosion", ofType: "mp3")!)
+
     override func drawRect(rect:CGRect){
         super.drawRect(rect)
         
@@ -28,6 +32,14 @@ class BattleField: UIView{
         hideActivePlayer2Ships()
         createCoverSheet("Player 1 are you ready1?")
         cover.hidden = true
+        
+        //Set sound
+        print(bombSound)
+        
+        //Preparation
+        do { audioPlayer = try AVAudioPlayer(contentsOfURL: bombSound, fileTypeHint: nil) }
+        catch let error as NSError { print(error.description) }
+        audioPlayer.prepareToPlay()
     }
     
     func createCoverSheet(s:String){
@@ -39,6 +51,7 @@ class BattleField: UIView{
             cover.tag = 1000
         }
         else{
+            cover = nil
             viewWithTag(1000)?.removeFromSuperview()
             cover = CoverSheet(frame: CGRectMake(0, 0, 520, 250))
             let color = UIColor(red: 38.0/255.0, green: 191.0/255.0, blue: 199.0/255.0, alpha: 1.0)
@@ -125,23 +138,27 @@ class BattleField: UIView{
             print("Switching turns")
             if game.turn == 0 {
                 
-                let delay = 2 * Double(NSEC_PER_SEC)
+                let delay = 3 * Double(NSEC_PER_SEC)
                 let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
                 dispatch_after(time, dispatch_get_main_queue()) {
                     // After 2 seconds this line will be executed
                     print("Player 1 turn")
                     self.createCoverSheet("Player 1 are you ready2?")
                     self.coverHidden = false
+                    self.hideActivePlayer2Ships()
+                    self.showActivePlayer1Ships()
                 }
             }
             else{
-                let delay = 2 * Double(NSEC_PER_SEC)
+                let delay = 3 * Double(NSEC_PER_SEC)
                 let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
                 dispatch_after(time, dispatch_get_main_queue()) {
                     // After 2 seconds this line will be executed
                     print("Player 2 turn")
                     self.createCoverSheet("Player 2 are you ready2?")
                     self.coverHidden = false
+                    self.showActivePlayer2Ships()
+                    self.hideActivePlayer1Ships()
                 }
             }
         }
@@ -169,8 +186,7 @@ class BattleField: UIView{
                     addSubview(destroyedTile)
                 }
                 print("Shoot point: (\(x), \(y))")
-                hideActivePlayer1Ships()
-                showActivePlayer2Ships()
+                audioPlayer.play()
                 validTouch = true
             }
             else{
@@ -190,8 +206,7 @@ class BattleField: UIView{
                     addSubview(destroyedTile)
                 }
                 print("Shoot point: (\(x), \(y))")
-                showActivePlayer1Ships()
-                hideActivePlayer2Ships()
+                audioPlayer.play()
                 validTouch = true
             }
             else{

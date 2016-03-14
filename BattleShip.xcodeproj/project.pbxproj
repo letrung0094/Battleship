@@ -17,6 +17,7 @@
 		91BA59341C950996007CA4B7 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 91BA59331C950996007CA4B7 /* Default-568h@2x.png */; };
 		91EE56AB1C960D5000E3D949 /* BattleField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91EE56AA1C960D5000E3D949 /* BattleField.swift */; };
 		91EE56AD1C963DC800E3D949 /* CoverSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91EE56AC1C963DC800E3D949 /* CoverSheet.swift */; };
+		91EE56AF1C96514D00E3D949 /* Explosion.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 91EE56AE1C96514D00E3D949 /* Explosion.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		91BA59331C950996007CA4B7 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		91EE56AA1C960D5000E3D949 /* BattleField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BattleField.swift; sourceTree = "<group>"; };
 		91EE56AC1C963DC800E3D949 /* CoverSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoverSheet.swift; sourceTree = "<group>"; };
+		91EE56AE1C96514D00E3D949 /* Explosion.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Explosion.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 				91BA592F1C94FCE4007CA4B7 /* GameListViewController.swift */,
 				91BA59311C94FD27007CA4B7 /* GameViewController.swift */,
 				91EE56AA1C960D5000E3D949 /* BattleField.swift */,
+				91EE56AE1C96514D00E3D949 /* Explosion.mp3 */,
 				91EE56AC1C963DC800E3D949 /* CoverSheet.swift */,
 			);
 			path = BattleShip;
@@ -243,6 +246,7 @@
 			files = (
 				91BA59071C94F6D3007CA4B7 /* Assets.xcassets in Resources */,
 				91BA59341C950996007CA4B7 /* Default-568h@2x.png in Resources */,
+				91EE56AF1C96514D00E3D949 /* Explosion.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
