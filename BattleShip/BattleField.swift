@@ -27,11 +27,29 @@ class BattleField: UIView{
         createPlayer2Grid()
         
         //Start at player 1 turn
-        print("Player 1 turn")
-        showActivePlayer1Ships()
-        hideActivePlayer2Ships()
-        createCoverSheet("Player 1 are you ready1?")
-        cover.hidden = true
+        if game.turn == 0{
+            print("Player 1 turn")
+            showActivePlayer1Ships()
+            hideActivePlayer2Ships()
+            createCoverSheet("Player 1 are you ready?")
+        }
+        else{
+            print("Player 2 turn")
+            showActivePlayer2Ships()
+            hideActivePlayer1Ships()
+            createCoverSheet("Player 2 are you ready?")
+        }
+        
+        //Display game stats but do not allow play
+        if game.gameEnded == true{
+            if game.gameWinner == 0{
+                createCoverSheet("Player 1 has already won!")
+            }
+            else{
+                createCoverSheet("Player 2 has already won!")
+            }
+        }
+        
         
         //Set sound
         print(bombSound)
@@ -40,6 +58,10 @@ class BattleField: UIView{
         do { audioPlayer = try AVAudioPlayer(contentsOfURL: bombSound, fileTypeHint: nil) }
         catch let error as NSError { print(error.description) }
         audioPlayer.prepareToPlay()
+    }
+    
+    func getGameStatus() -> Game{
+        return game
     }
     
     //Creates a cover sheet with appropriate message
@@ -87,7 +109,21 @@ class BattleField: UIView{
             player1Grid.tag = shipTemp.shipID
             addSubview(player1Grid)
         }
-        
+        //Create previous destroyed ships
+        for var i = 0; i < game.player1DeadShips.count; i++ {
+            let shipTemp = game.player1DeadShips[i]
+            let player1Grid = Player1GridDestroyed(frame: CGRectMake(CGFloat(50 * shipTemp.positionX), CGFloat(50 * shipTemp.positionY), 50, 50))
+            player1Grid.updatePosition(shipTemp.positionX, newY: shipTemp.positionY)
+            player1Grid.tag = shipTemp.shipID
+            addSubview(player1Grid)
+        }
+        //Create destroyed water tiles
+        for var i = 0; i < game.DestroyedPlayer1Tiles.count; i++ {
+            let waterTemp = game.DestroyedPlayer1Tiles[i]
+            let waterGrid = WaterDestroyed(frame: CGRectMake(CGFloat(50 * waterTemp.positionX), CGFloat(50 * waterTemp.positionY), 50, 50))
+            waterGrid.updatePosition(waterTemp.positionX, newY: waterTemp.positionY)
+            addSubview(waterGrid)
+        }
     }
     
     //Create water tiles and ship tiles for player 2
@@ -107,6 +143,21 @@ class BattleField: UIView{
             player2Grid.updatePosition(shipTemp.positionX, newY: shipTemp.positionY)
             player2Grid.tag = shipTemp.shipID
             addSubview(player2Grid)
+        }
+        //Create previous destroyed ships
+        for var i = 0; i < game.player2DeadShips.count; i++ {
+            let shipTemp = game.player2DeadShips[i]
+            let player2Grid = Player2GridDestroyed(frame: CGRectMake(frame.width/2 + CGFloat(50 * shipTemp.positionX) + 10, CGFloat(50 * shipTemp.positionY), 50, 50))
+            player2Grid.updatePosition(shipTemp.positionX, newY: shipTemp.positionY)
+            player2Grid.tag = shipTemp.shipID
+            addSubview(player2Grid)
+        }
+        //Create destroyed water tiles
+        for var i = 0; i < game.DestroyedPlayer2Tiles.count; i++ {
+            let waterTemp = game.DestroyedPlayer2Tiles[i]
+            let waterGrid = WaterDestroyed(frame: CGRectMake(CGFloat(50 * waterTemp.positionX) + 10, CGFloat(50 * waterTemp.positionY) + 10, 50, 50))
+            waterGrid.updatePosition(waterTemp.positionX, newY: waterTemp.positionY)
+            addSubview(waterGrid)
         }
     }
     
@@ -145,7 +196,7 @@ class BattleField: UIView{
     //After a succesful touch, display m
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesBegan(touches, withEvent: event)
-        if validTouch == true {
+        if validTouch == true && game.gameEnded == false{
             print("Switching turns")
             if game.turn == 0 {
                 
@@ -154,7 +205,7 @@ class BattleField: UIView{
                 dispatch_after(time, dispatch_get_main_queue()) {
                     // After 2 seconds this line will be executed
                     print("Player 1 turn")
-                    self.createCoverSheet("Player 1 are you ready2?")
+                    self.createCoverSheet("Player 1 are you ready?")
                     self.coverHidden = false
                     self.hideActivePlayer2Ships()
                     self.showActivePlayer1Ships()
@@ -166,7 +217,7 @@ class BattleField: UIView{
                 dispatch_after(time, dispatch_get_main_queue()) {
                     // After 2 seconds this line will be executed
                     print("Player 2 turn")
-                    self.createCoverSheet("Player 2 are you ready2?")
+                    self.createCoverSheet("Player 2 are you ready?")
                     self.coverHidden = false
                     self.showActivePlayer2Ships()
                     self.hideActivePlayer1Ships()
@@ -185,12 +236,15 @@ class BattleField: UIView{
         let y = floor(touchPoint.y / 50.0)
         
         //Player 1 turn
-        if game.turn == 0 && coverHidden == true {
+        if game.turn == 0 && coverHidden == true && game.gameEnded == false {
             //Player 1 can only shoot at player 2 grid
             if x > 4{
                 if game.shootAt(Int(x), y: Int(y)){
                     let destroyedTile = Player2GridDestroyed(frame: CGRectMake(CGFloat(50 * x) + 20, CGFloat(50 * y), 50, 50))
                     addSubview(destroyedTile)
+                    if game.player2Ships.isEmpty{
+                        reportPlayer1Win()
+                    }
                 }
                 else{
                     let destroyedTile = WaterDestroyed(frame: CGRectMake(CGFloat(50 * x) + 20, CGFloat(50 * y), 50, 50))
@@ -205,12 +259,15 @@ class BattleField: UIView{
             }
         }
         //Player 2 turn
-        else if game.turn == 1 && coverHidden == true {
+        else if game.turn == 1 && coverHidden == true && game.gameEnded == false {
             //Player 2 can only shoot at player 1 grid
             if x < 5{
                 if game.shootAt(Int(x), y: Int(y)){
                     let destroyedTile = Player1GridDestroyed(frame: CGRectMake(CGFloat(50 * x), CGFloat(50 * y), 50, 50))
                     addSubview(destroyedTile)
+                    if game.player1Ships.isEmpty{
+                        reportPlayer2Win()
+                    }
                 }
                 else{
                     let destroyedTile = WaterDestroyed(frame: CGRectMake(CGFloat(50 * x), CGFloat(50 * y), 50, 50))
@@ -229,5 +286,19 @@ class BattleField: UIView{
             cover.hidden = true
             coverHidden = true
         }
+    }
+    
+    //End the game with player 1 winning
+    func reportPlayer1Win(){
+        game.gameEnded = true
+        game.gameWinner = 0
+        createCoverSheet("Player 1 has won!")
+    }
+    
+    //End the game with player 2 winning
+    func reportPlayer2Win(){
+        game.gameEnded = true
+        game.gameWinner = 1
+        createCoverSheet("Player 2 has won!")
     }
 }

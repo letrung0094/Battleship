@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-
+//Cover sheet that covers the battlefield and displays a message
 class CoverSheet: UIView{
     var label: UILabel = UILabel()
     override func drawRect(rect:CGRect){

@@ -9,7 +9,7 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GameViewDelegate {
 
     var window: UIWindow?
     var gameListcontroller: GameListViewController!
@@ -41,7 +41,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func newGame(){
         print("Creating a new game")
         let gamecontroller: GameViewController = GameViewController()
+        gamecontroller.delegate = self
+        gamecontroller.setPotentialID(gameListcontroller.gameList.gamesCount)
         navBar?.pushViewController(gamecontroller, animated: true)
+    }
+    
+    func collection(collection: GameViewController, getGame game: Game) {
+        print("Game received in app delegate")
+        gameListcontroller.addOrUpdateGame(game)
     }
 
     func applicationWillResignActive(application: UIApplication) {

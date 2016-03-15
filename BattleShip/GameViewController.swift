@@ -9,12 +9,19 @@
 import Foundation
 import UIKit
 
+protocol GameViewDelegate: class{
+    func collection(collection: GameViewController, getGame game: Game)
+}
+
 class GameViewController: UIViewController{
     
     var currentGame: Game!
     var numberOfColumns: Int = 5
     var numberOfRows: Int = 5
     var field: BattleField!
+    var newGameID: Int!
+    
+    weak var delegate: GameViewDelegate?
     
     override func loadView(){
         view = UIView()
@@ -29,9 +36,13 @@ class GameViewController: UIViewController{
         UIDevice.currentDevice().setValue(value, forKey: "orientation")
         
         if currentGame == nil {
-            createNewGame(1)
+            createNewGame(newGameID)
         }
         createField()
+    }
+    
+    func setPotentialID(newID: Int){
+        newGameID = newID
     }
     
     func createField(){
@@ -39,6 +50,12 @@ class GameViewController: UIViewController{
         field.loadGame(currentGame)
         field.backgroundColor = UIColor.brownColor()
         view.addSubview(field)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        print("Leaving game view")
+        currentGame = field.getGameStatus()
+        delegate?.collection(self, getGame: currentGame)
     }
     
     override func shouldAutorotate() -> Bool {

@@ -109,11 +109,11 @@
 				91BA58FF1C94F6D3007CA4B7 /* AppDelegate.swift */,
 				91BA592D1C94FCD6007CA4B7 /* DataModel.swift */,
 				91BA59061C94F6D3007CA4B7 /* Assets.xcassets */,
+				91EE56AE1C96514D00E3D949 /* Explosion.mp3 */,
 				91BA590B1C94F6D3007CA4B7 /* Info.plist */,
 				91BA592F1C94FCE4007CA4B7 /* GameListViewController.swift */,
 				91BA59311C94FD27007CA4B7 /* GameViewController.swift */,
 				91EE56AA1C960D5000E3D949 /* BattleField.swift */,
-				91EE56AE1C96514D00E3D949 /* Explosion.mp3 */,
 				91EE56AC1C963DC800E3D949 /* CoverSheet.swift */,
 			);
 			path = BattleShip;

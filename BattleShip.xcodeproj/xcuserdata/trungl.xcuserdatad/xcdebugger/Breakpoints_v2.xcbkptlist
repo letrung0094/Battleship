@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BattleShip/DataModel.swift"
-            timestampString = "479604010.287014"
+            timestampString = "479697730.279874"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
             landmarkName = "shootAt(_:y:)"
             landmarkType = "5">
          </BreakpointContent>

@@ -9,12 +9,23 @@
 import Foundation
 import UIKit
 
-class GameListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class GameListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, GameViewDelegate {
     
     var gameList: GameCollection = GameCollection()
+    var navBar: UINavigationController!
     
     var gameListView: UITableView{
         return view as! UITableView
+    }
+    
+    func collection(collection: GameViewController, getGame game: Game){
+        print("Game received to save")
+        addOrUpdateGame(game)
+    }
+    
+    func addOrUpdateGame(gameToSave: Game){
+        gameList.addGame(gameToSave)
+        gameListView.reloadData()
     }
     
     override func loadView(){
@@ -30,12 +41,6 @@ class GameListViewController: UIViewController, UITableViewDelegate, UITableView
         let value = UIInterfaceOrientation.Portrait.rawValue
         UIDevice.currentDevice().setValue(value, forKey: "orientation")
         
-        let tempGame = Game()
-        tempGame.gameID = 0
-        tempGame.createRandomPlayer1Ships()
-        tempGame.createRandomPlayer2Ships()
-        tempGame.createBattleField()
-        gameList.addGame(tempGame)
     }
     
     override func shouldAutorotate() -> Bool {
@@ -50,7 +55,28 @@ class GameListViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
         let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(UITableViewCell.self))!
-        cell.textLabel?.text = "Game \(indexPath.section)"
+        
+        let game = gameList.accessGame(indexPath.row)
+        
+        if game.gameEnded == true{
+            if game.gameWinner == 0{
+                cell.textLabel?.text = "Game \(indexPath.row) - Player 1 wins with Score: \(game.player1Ships.count) : \(game.player2Ships.count)"
+                cell.backgroundColor = UIColor.redColor()
+            }
+            else{
+                cell.textLabel?.text = "Game \(indexPath.row) - Player 2 wins with Score: \(game.player1Ships.count) : \(game.player2Ships.count)"
+                cell.backgroundColor = UIColor.redColor()
+            }
+        }
+        else{
+            if game.turn == 0{
+                cell.textLabel?.text = "Game \(indexPath.row) - Player 1 turn - Score: \(game.player1Ships.count) : \(game.player2Ships.count)"
+            }
+            else{
+                cell.textLabel?.text = "Game \(indexPath.row) - Player 2 turn - Score: \(game.player1Ships.count) : \(game.player2Ships.count)"
+            }
+        }
+   
         
         return cell
     }
@@ -58,11 +84,14 @@ class GameListViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         print(indexPath.section)
         
-        let game = gameList.accessGame(indexPath.section)
+        let game = gameList.accessGame(indexPath.row)
         let newGameScreen = GameViewController()
+        newGameScreen.delegate = self
         newGameScreen.loadGame(game)
         navigationController?.pushViewController(newGameScreen, animated: true)
     }
+    
+    
   
     
 }
