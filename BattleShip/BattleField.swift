@@ -45,7 +45,7 @@ class BattleField: UIView{
             if game.gameWinner == 0{
                 createCoverSheet("Player 1 has already won!")
             }
-            else{
+            else if game.gameWinner == 1{
                 createCoverSheet("Player 2 has already won!")
             }
         }

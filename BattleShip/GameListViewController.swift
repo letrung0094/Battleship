@@ -63,7 +63,7 @@ class GameListViewController: UIViewController, UITableViewDelegate, UITableView
                 cell.textLabel?.text = "Game \(indexPath.row) - Player 1 wins with Score: \(game.player1Ships.count) : \(game.player2Ships.count)"
                 cell.backgroundColor = UIColor.redColor()
             }
-            else{
+            else if game.gameWinner == 1{
                 cell.textLabel?.text = "Game \(indexPath.row) - Player 2 wins with Score: \(game.player1Ships.count) : \(game.player2Ships.count)"
                 cell.backgroundColor = UIColor.redColor()
             }

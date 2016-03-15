@@ -10,24 +10,39 @@
 import Foundation
 import UIKit
 
-class GameCollection{
-    var listOfActiveGames = [Int: Game]()
+class GameCollection: NSObject, NSCoding{
+    
+    override init() {
+        super.init()
+    }
+    
+    func encodeWithCoder(aCoder: NSCoder) {
+        aCoder.encodeObject(listOfActiveGames, forKey: "gamesList")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        listOfActiveGames = aDecoder.decodeObjectOfClass(NSArray.self, forKey: "gamesList") as! [Game]
+    }
+    
+    var gameCollectionName: String?
+    
+    var listOfActiveGames = [Game]()
     
     var gamesCount: Int{
         return listOfActiveGames.count
     }
     
     func addGame(newGame: Game){
-        listOfActiveGames[newGame.gameID] = newGame
+        listOfActiveGames.append(newGame)
     }
     
     func removeGame(gameID: Int){
-        listOfActiveGames.removeValueForKey(gameID)
+        listOfActiveGames.removeAtIndex(gameID)
     }
     
     func accessGame(gameID: Int) -> Game{
         let gameToReturn = listOfActiveGames[gameID]
-        return gameToReturn!
+        return gameToReturn
     }
     
     func updateGameState(gameID: Int){
@@ -35,7 +50,7 @@ class GameCollection{
     }
 }
 
-class Game{
+class Game: NSObject, NSCoding{
     
     //0 = player 1 turn, 1 = player 2 turn
     var turn: Int!
@@ -45,16 +60,48 @@ class Game{
     var numberOfGridColumns = 6
     var numberOfGridRows = 6
     var gameEnded: Bool = false
-    var gameWinner: Int!
+    var gameWinner = 3 //cause encoder does not like nil
     var player1DeadShips = [Ship]()
     var player2DeadShips = [Ship]()
-    var DestroyedPlayer1Tiles = [Tile]()
-    var DestroyedPlayer2Tiles = [Tile]()
+    var DestroyedPlayer1Tiles = [Ship]()
+    var DestroyedPlayer2Tiles = [Ship]()
     var shipPositionsPlayer1 = [Coordinates]()
     var shipPositionsPlayer2 = [Coordinates]()
     
     func createBattleField(){
         turn = 0
+    }
+    
+    override init() {
+        super.init()
+    }
+    
+    func encodeWithCoder(aCoder: NSCoder) {
+        //aCoder.encodeObject(listOfActiveGames, forKey: "gamesList")
+        aCoder.encodeInteger(turn, forKey: "Turn")
+        aCoder.encodeInteger(gameID, forKey: "GameID")
+        aCoder.encodeBool(gameEnded, forKey: "GameEnded")
+        aCoder.encodeInteger(gameWinner, forKey: "GameWinner")
+        aCoder.encodeObject(player1Ships, forKey: "Player1Ships")
+        aCoder.encodeObject(player2Ships, forKey: "Player2Ships")
+        aCoder.encodeObject(player1DeadShips, forKey: "Player1DeadShips")
+        aCoder.encodeObject(player1DeadShips, forKey: "Player2DeadShips")
+        aCoder.encodeObject(DestroyedPlayer1Tiles, forKey: "DestroyedPlayer1Tiles")
+        aCoder.encodeObject(DestroyedPlayer2Tiles, forKey: "DestroyedPlayer2Tiles")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        //listOfActiveGames = aDecoder.decodeObjectOfClass(NSArray.self, forKey: "gamesList") as! [Game]
+        turn = aDecoder.decodeIntegerForKey("Turn")
+        gameID = aDecoder.decodeIntegerForKey("GameID")
+        gameEnded = aDecoder.decodeBoolForKey("GameEnded")
+        gameWinner = aDecoder.decodeIntegerForKey("GameWinner")
+        player1Ships = aDecoder.decodeObjectForKey("Player1Ships") as! [Ship]
+        player2Ships = aDecoder.decodeObjectForKey("Player2Ships") as! [Ship]
+        player1DeadShips = aDecoder.decodeObjectForKey("Player1DeadShips") as! [Ship]
+        player2DeadShips = aDecoder.decodeObjectForKey("Player2DeadShips") as! [Ship]
+        DestroyedPlayer1Tiles = aDecoder.decodeObjectForKey("DestroyedPlayer1Tiles") as! [Ship]
+        DestroyedPlayer2Tiles = aDecoder.decodeObjectForKey("DestroyedPlayer2Tiles") as! [Ship]
     }
     
     //Attempt to shoot at a tile
@@ -70,7 +117,7 @@ class Game{
                     return didHit()
                 }
             }
-            let missShot = Tile()
+            let missShot = Ship()
             missShot.updatePosition(x, y: y)
             DestroyedPlayer2Tiles.append(missShot)
             switchTurn()
@@ -86,7 +133,7 @@ class Game{
                     return didHit()
                 }
             }
-            let missShot = Tile()
+            let missShot = Ship()
             missShot.updatePosition(x, y: y)
             DestroyedPlayer1Tiles.append(missShot)
             switchTurn()
@@ -186,23 +233,37 @@ struct Coordinates{
 }
 
 //Default tile
-class Tile{
+class Ship: NSObject, NSCoding{
     var positionX: Int!
     var positionY: Int!
+    var shipID = 999999
+    var shipSize = 1
+    
+    func updateShipID(id: Int){
+        shipID = id
+    }
+    
+    override init() {
+        super.init()
+    }
+    
+    func encodeWithCoder(aCoder: NSCoder) {
+        aCoder.encodeInteger(positionX, forKey: "X")
+        aCoder.encodeInteger(positionY, forKey: "Y")
+        aCoder.encodeInteger(shipID, forKey: "ShipID")
+        aCoder.encodeInteger(shipSize, forKey: "ShipSize")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        positionX = aDecoder.decodeIntegerForKey("X")
+        positionY = aDecoder.decodeIntegerForKey("Y")
+        shipID = aDecoder.decodeIntegerForKey("ShipID")
+        shipSize = aDecoder.decodeIntegerForKey("ShipSize")
+    }
     
     func updatePosition(x: Int, y: Int){
         positionX = x
         positionY = y
-    }
-}
-
-//Ship tile
-class Ship: Tile{
-    var shipID: Int!
-    var shipSize: Int!
-    
-    func updateShipID(id: Int){
-        shipID = id
     }
 }
 
