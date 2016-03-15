@@ -35,7 +35,15 @@ class GameCollection: NSObject, NSCoding{
     }
     
     func addGame(newGame: Game){
-        listOfActiveGames.append(newGame)
+        
+        //If new game, append
+        if checkID(newGame.gameID){
+            listOfActiveGames.append(newGame)
+        }
+        //Else update old game
+        else{
+            listOfActiveGames[newGame.gameID] = newGame
+        }
     }
     
     func removeGame(gameID: Int){
@@ -47,8 +55,15 @@ class GameCollection: NSObject, NSCoding{
         return gameToReturn
     }
     
-    func updateGameState(gameID: Int){
-        
+    //Returns true if game is new, false if game already exists
+    func checkID(id:Int) -> Bool{
+        for var i = 0; i < listOfActiveGames.count; i++ {
+            let temp = listOfActiveGames[i]
+            if temp.gameID == id{
+                return false
+            }
+        }
+        return true
     }
 }
 
@@ -182,7 +197,7 @@ class Game: NSObject, NSCoding{
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
             }
-                while(validPosition2(coordinantes) == false)
+            while(validPosition2(coordinantes) == false)
             ship.shipID = i
             ship.shipSize = 1
             ship.updateShipID(i+20)
