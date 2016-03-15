@@ -16,10 +16,12 @@ class GameCollection: NSObject, NSCoding{
         super.init()
     }
     
+    //Encode games
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(listOfActiveGames, forKey: "gamesList")
     }
     
+    //Called to decode data into game object
     required init?(coder aDecoder: NSCoder) {
         listOfActiveGames = aDecoder.decodeObjectOfClass(NSArray.self, forKey: "gamesList") as! [Game]
     }
@@ -76,6 +78,8 @@ class Game: NSObject, NSCoding{
         super.init()
     }
     
+    
+    //Encode data
     func encodeWithCoder(aCoder: NSCoder) {
         //aCoder.encodeObject(listOfActiveGames, forKey: "gamesList")
         aCoder.encodeInteger(turn, forKey: "Turn")
@@ -90,6 +94,7 @@ class Game: NSObject, NSCoding{
         aCoder.encodeObject(DestroyedPlayer2Tiles, forKey: "DestroyedPlayer2Tiles")
     }
     
+    //Decode data
     required init?(coder aDecoder: NSCoder) {
         //listOfActiveGames = aDecoder.decodeObjectOfClass(NSArray.self, forKey: "gamesList") as! [Game]
         turn = aDecoder.decodeIntegerForKey("Turn")
@@ -247,6 +252,7 @@ class Ship: NSObject, NSCoding{
         super.init()
     }
     
+    //Encode data
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeInteger(positionX, forKey: "X")
         aCoder.encodeInteger(positionY, forKey: "Y")
@@ -254,6 +260,7 @@ class Ship: NSObject, NSCoding{
         aCoder.encodeInteger(shipSize, forKey: "ShipSize")
     }
     
+    //Decode data
     required init?(coder aDecoder: NSCoder) {
         positionX = aDecoder.decodeIntegerForKey("X")
         positionY = aDecoder.decodeIntegerForKey("Y")

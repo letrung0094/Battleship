@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GameViewDelegate {
         gameListcontroller = GameListViewController()
         gameListcontroller.title = "List Of Games"
         
+        //Reload data if there is any
         if let data = NSUserDefaults.standardUserDefaults().objectForKey("gameList") as? NSData {
             let games = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! GameCollection
             gameListcontroller.gameList = games
@@ -66,6 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GameViewDelegate {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         
+        //Save the data
         let game = gameListcontroller.gameList
         NSUserDefaults.standardUserDefaults().setObject(NSKeyedArchiver.archivedDataWithRootObject(game), forKey: "gameList")
         NSUserDefaults.standardUserDefaults().synchronize()
