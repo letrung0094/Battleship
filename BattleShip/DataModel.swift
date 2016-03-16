@@ -87,6 +87,19 @@ class Game: NSObject, NSCoding{
     
     func createBattleField(){
         turn = 0
+        //Create ships for player 1
+        createShipSize2(0)
+        createShipSize3(0)
+        createShipSize3(0)
+        createShipSize4(0)
+        createShipSize5(0)
+        
+        //Create ships for player 2
+        createShipSize2(1)
+        createShipSize3(1)
+        createShipSize3(1)
+        createShipSize4(1)
+        createShipSize5(1)
     }
     
     override init() {
@@ -131,8 +144,11 @@ class Game: NSObject, NSCoding{
             for var i = 0; i < player2Ships.count; i++ {
                 let temp = player2Ships[i]
                 if temp.positionX == x % 5 && temp.positionY == y % 5{
-                    player2DeadShips.append(temp)
-                    player2Ships.removeAtIndex(i)
+                    player2Ships[i].life--
+                    if player2Ships[i].life == 0{
+                        player2DeadShips.append(temp)
+                        player2Ships.removeAtIndex(i)
+                    }
                     switchTurn()
                     return didHit()
                 }
@@ -147,8 +163,11 @@ class Game: NSObject, NSCoding{
             for var i = 0; i < player1Ships.count; i++ {
                 let temp = player1Ships[i]
                 if temp.positionX == x && temp.positionY == y{
-                    player1DeadShips.append(temp)
-                    player1Ships.removeAtIndex(i)
+                    player1Ships[i].life--
+                    if player1Ships[i].life == 0 {
+                        player1DeadShips.append(temp)
+                        player1Ships.removeAtIndex(i)
+                    }
                     switchTurn()
                     return didHit()
                 }
@@ -168,39 +187,181 @@ class Game: NSObject, NSCoding{
         return true
     }
     
-    //Create random ship locations
-    func createRandomPlayer1Ships(){
-        turn = 0
-        var coordinantes: Coordinates = Coordinates()
-        for var i = 0; i < 5; i++ {
+    func createShipSize2(forPlayer: Int){
+        var coor2 = Coordinates()
+        var coordinantes = Coordinates()
+        if forPlayer == 0{
+            turn = 0
             let ship = Ship()
             repeat{
-                ship.updatePosition(Int(arc4random_uniform(5)), y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(3)), y: Int(arc4random_uniform(5)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
+                coor2.positionX = ship.positionX + 1
+                coor2.positionY = ship.positionY
             }
-            while(validPosition1(coordinantes) == false)
-            ship.shipID = i
-            ship.shipSize = 1
-            ship.updateShipID(i+10)
+            while(validPosition1(coordinantes) == false && validPosition1(coor2))
+            ship.shipID = generateID()
+            ship.life = 2
+            ship.shipSize = 2
+            addNewShip(ship)
+            
+        }
+        else{
+            turn = 1
+            let ship = Ship()
+            repeat{
+                ship.updatePosition(Int(arc4random_uniform(3)), y: Int(arc4random_uniform(5)))
+                coordinantes.positionX = ship.positionX
+                coordinantes.positionY = ship.positionY
+                coor2.positionX = ship.positionX + 1
+                coor2.positionY = ship.positionY
+            }
+            while(validPosition2(coordinantes) == false && validPosition2(coor2))
+            ship.shipID = generateID()
+            ship.life = 2
+            ship.shipSize = 2
             addNewShip(ship)
         }
     }
     
-    func createRandomPlayer2Ships(){
-        turn = 1
-        var coordinantes: Coordinates = Coordinates()
-        for var i = 0; i < 5; i++ {
+    func createShipSize3(forPlayer: Int){
+        var coor2 = Coordinates()
+        var coor3 = Coordinates()
+        var coordinantes = Coordinates()
+        if forPlayer == 0{
+            turn = 0
             let ship = Ship()
             repeat{
-                ship.updatePosition(Int(arc4random_uniform(5)), y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(2)), y: Int(arc4random_uniform(5)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
+                coor2.positionX = ship.positionX + 1
+                coor3.positionX = ship.positionX + 2
+                coor3.positionY = ship.positionY
+                coor2.positionY = ship.positionY
             }
-            while(validPosition2(coordinantes) == false)
-            ship.shipID = i
-            ship.shipSize = 1
-            ship.updateShipID(i+20)
+            while(validPosition1(coordinantes) == false && validPosition1(coor2) && validPosition1(coor3))
+            ship.shipID = generateID()
+            ship.life = 3
+            ship.shipSize = 3
+            addNewShip(ship)
+        }
+        else{
+            turn = 1
+            let ship = Ship()
+            repeat{
+                ship.updatePosition(Int(arc4random_uniform(2)), y: Int(arc4random_uniform(5)))
+                coordinantes.positionX = ship.positionX
+                coordinantes.positionY = ship.positionY
+                coor2.positionX = ship.positionX + 1
+                coor3.positionX = ship.positionX + 2
+                coor3.positionY = ship.positionY
+                coor2.positionY = ship.positionY
+            }
+            while(validPosition1(coordinantes) == false && validPosition1(coor2) && validPosition1(coor3))
+            ship.shipID = generateID()
+            ship.life = 3
+            ship.shipSize = 3
+            addNewShip(ship)
+        }
+    }
+    
+    func createShipSize4(forPlayer: Int){
+        var coor4 = Coordinates()
+        var coor2 = Coordinates()
+        var coor3 = Coordinates()
+        var coordinantes = Coordinates()
+        if forPlayer == 0{
+            turn = 0
+            let ship = Ship()
+            repeat{
+                ship.updatePosition(Int(arc4random_uniform(1)), y: Int(arc4random_uniform(5)))
+                coordinantes.positionX = ship.positionX
+                coordinantes.positionY = ship.positionY
+                coor2.positionX = ship.positionX + 1
+                coor3.positionX = ship.positionX + 2
+                coor4.positionX = ship.positionX + 3
+                coor4.positionY = ship.positionY
+                coor3.positionY = ship.positionY
+                coor2.positionY = ship.positionY
+            }
+            while(validPosition1(coordinantes) == false && validPosition1(coor2) && validPosition1(coor3) && validPosition1(coor4))
+            ship.shipID = generateID()
+            ship.life = 4
+            ship.shipSize = 4
+            addNewShip(ship)
+            
+        }
+        else{
+            turn = 1
+            let ship = Ship()
+            repeat{
+                ship.updatePosition(Int(arc4random_uniform(1)), y: Int(arc4random_uniform(5)))
+                coordinantes.positionX = ship.positionX
+                coordinantes.positionY = ship.positionY
+                coor2.positionX = ship.positionX + 1
+                coor3.positionX = ship.positionX + 2
+                coor4.positionX = ship.positionX + 3
+                coor4.positionY = ship.positionY
+                coor3.positionY = ship.positionY
+                coor2.positionY = ship.positionY
+            }
+            while(validPosition1(coordinantes) == false && validPosition1(coor2) && validPosition1(coor3) && validPosition1(coor4))
+            ship.shipID = generateID()
+            ship.life = 4
+            ship.shipSize = 4
+            addNewShip(ship)
+        }
+    }
+    
+    func createShipSize5(forPlayer: Int){
+        var coor5 = Coordinates()
+        var coor4 = Coordinates()
+        var coor2 = Coordinates()
+        var coor3 = Coordinates()
+        var coordinantes = Coordinates()
+        if forPlayer == 0{
+            turn = 0
+            let ship = Ship()
+            repeat{
+                ship.updatePosition(0, y: Int(arc4random_uniform(5)))
+                coordinantes.positionX = ship.positionX
+                coordinantes.positionY = ship.positionY
+                coor2.positionX = ship.positionX + 1
+                coor3.positionX = ship.positionX + 2
+                coor4.positionX = ship.positionX + 3
+                coor5.positionX = ship.positionX + 4
+                coor5.positionY = ship.positionY
+                coor4.positionY = ship.positionY
+                coor3.positionY = ship.positionY
+                coor2.positionY = ship.positionY
+            }
+            while(validPosition1(coordinantes) == false && validPosition1(coor2) && validPosition1(coor3) && validPosition1(coor4) && validPosition1(coor5))
+            ship.shipID = generateID()
+            ship.life = 5
+            ship.shipSize = 5
+            addNewShip(ship)
+            
+        }
+        else{
+            turn = 1
+            let ship = Ship()
+            repeat{
+                ship.updatePosition(0, y: Int(arc4random_uniform(5)))
+                coordinantes.positionX = ship.positionX
+                coordinantes.positionY = ship.positionY
+                coor2.positionX = ship.positionX + 1
+                coor3.positionX = ship.positionX + 2
+                coor4.positionX = ship.positionX + 3
+                coor4.positionY = ship.positionY
+                coor3.positionY = ship.positionY
+                coor2.positionY = ship.positionY
+            }
+            while(validPosition1(coordinantes) == false && validPosition1(coor2) && validPosition1(coor3) && validPosition1(coor4) && validPosition1(coor5))
+            ship.shipID = generateID()
+            ship.life = 5
+            ship.shipSize = 5
             addNewShip(ship)
         }
     }
@@ -210,17 +371,44 @@ class Game: NSObject, NSCoding{
         for var i = 0; i < shipPositionsPlayer1.count; i++ {
             let coordToCheck = shipPositionsPlayer1[i]
             if coord.positionX == coordToCheck.positionX && coord.positionY == coordToCheck.positionY {
-                return false
+                if coord.positionX > 5{
+                    return false
+                }
             }
         }
         return true
+    }
+    
+    func generateID() -> Int{
+        var temp = Int(arc4random_uniform(UInt32.max))
+        var check: Bool
+        repeat{
+            temp = Int(arc4random_uniform(UInt32.max))
+            check = true
+            for var i = 0; i < player1Ships.count; i++ {
+                let ship = player1Ships[i]
+                if temp == ship.shipID{
+                    check = false
+                }
+            for var i = 0; i < player2Ships.count; i++ {
+                let ship = player2Ships[i]
+                if temp == ship.shipID{
+                    check = false
+                }
+            }
+        }
+        }while check == false
+        
+        return temp
     }
     
     func validPosition2(coord: Coordinates)->Bool{
         for var i = 0; i < shipPositionsPlayer2.count; i++ {
             let coordToCheck = shipPositionsPlayer2[i]
             if coord.positionX == coordToCheck.positionX && coord.positionY == coordToCheck.positionY {
-                return false
+                if coord.positionX > 5{
+                    return false
+                }
             }
         }
         return true
@@ -257,6 +445,7 @@ class Ship: NSObject, NSCoding{
     var positionX: Int!
     var positionY: Int!
     var shipID = 999999
+    var life = 0
     var shipSize = 1
     
     func updateShipID(id: Int){
@@ -290,11 +479,11 @@ class Ship: NSObject, NSCoding{
 }
 
 //Player1 ship graphics grid
-class Player1Grid: Grid{
+class ShipEnd: Grid{
     override func drawRect(rect:CGRect){
         super.drawRect(rect)
         
-        UIImage(named: "Player1Ships")?.drawInRect(self.bounds)
+        UIImage(named: "ShipEnd1")?.drawInRect(self.bounds)
         UIGraphicsBeginImageContext(self.frame.size)
         let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -303,11 +492,11 @@ class Player1Grid: Grid{
 }
 
 //Player 2 ship graphics grid
-class Player2Grid: Grid{
+class ShipMid: Grid{
     override func drawRect(rect:CGRect){
         super.drawRect(rect)
         
-        UIImage(named: "Player2Ships")?.drawInRect(self.bounds)
+        UIImage(named: "ShipMid")?.drawInRect(self.bounds)
         UIGraphicsBeginImageContext(self.frame.size)
         let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -316,11 +505,11 @@ class Player2Grid: Grid{
 }
 
 //Player 1 ship destroyed graphics grid
-class Player1GridDestroyed: Grid{
+class ShipEnd2: Grid{
     override func drawRect(rect:CGRect){
         super.drawRect(rect)
         
-        UIImage(named: "Player1ShipOnFire")?.drawInRect(self.bounds)
+        UIImage(named: "ShipEnd2")?.drawInRect(self.bounds)
         UIGraphicsBeginImageContext(self.frame.size)
         let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -329,11 +518,37 @@ class Player1GridDestroyed: Grid{
 }
 
 //Player 2 ship destroyed graphics grid
-class Player2GridDestroyed: Grid{
+class ShipEnd1Destroyed: Grid{
     override func drawRect(rect:CGRect){
         super.drawRect(rect)
         
-        UIImage(named: "Player2ShipOnFire")?.drawInRect(self.bounds)
+        UIImage(named: "ShipEnd1Fire")?.drawInRect(self.bounds)
+        UIGraphicsBeginImageContext(self.frame.size)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        self.backgroundColor = UIColor(patternImage: image)
+    }
+}
+
+//Player 2 ship destroyed graphics grid
+class ShipMidDestroyed: Grid{
+    override func drawRect(rect:CGRect){
+        super.drawRect(rect)
+        
+        UIImage(named: "ShipMidFire")?.drawInRect(self.bounds)
+        UIGraphicsBeginImageContext(self.frame.size)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        self.backgroundColor = UIColor(patternImage: image)
+    }
+}
+
+//Player 2 ship destroyed graphics grid
+class ShipEnd2Destroyed: Grid{
+    override func drawRect(rect:CGRect){
+        super.drawRect(rect)
+        
+        UIImage(named: "ShipEnd2Fire")?.drawInRect(self.bounds)
         UIGraphicsBeginImageContext(self.frame.size)
         let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()

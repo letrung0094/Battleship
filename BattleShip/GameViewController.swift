@@ -69,8 +69,6 @@ class GameViewController: UIViewController{
     func createNewGame(newGameID: Int){
         currentGame = Game()
         currentGame.gameID = newGameID
-        currentGame.createRandomPlayer1Ships()
-        currentGame.createRandomPlayer2Ships()
         currentGame.createBattleField()
     }
     

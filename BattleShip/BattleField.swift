@@ -17,6 +17,7 @@ class BattleField: UIView{
     var cover: CoverSheet!
     var validTouch: Bool = false
     var coverHidden: Bool = false
+    var check = [Int]()
     var audioPlayer = AVAudioPlayer()
     let bombSound = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("Explosion", ofType: "mp3")!)
 
@@ -25,6 +26,9 @@ class BattleField: UIView{
         
         createPlayer1Grid()
         createPlayer2Grid()
+        
+        print(frame.height)
+        print(frame.width)
         
         //Start at player 1 turn
         if game.turn == 0{
@@ -104,15 +108,12 @@ class BattleField: UIView{
         //Create ship tiles
         for var i = 0; i < game.player1Ships.count; i++ {
             let shipTemp = game.player1Ships[i]
-            let player1Grid = Player1Grid(frame: CGRectMake(CGFloat(50 * shipTemp.positionX), CGFloat(50 * shipTemp.positionY), 50, 50))
-            player1Grid.updatePosition(shipTemp.positionX, newY: shipTemp.positionY)
-            player1Grid.tag = shipTemp.shipID
-            addSubview(player1Grid)
+            createGridPlayer1(shipTemp)
         }
         //Create previous destroyed ships
         for var i = 0; i < game.player1DeadShips.count; i++ {
             let shipTemp = game.player1DeadShips[i]
-            let player1Grid = Player1GridDestroyed(frame: CGRectMake(CGFloat(50 * shipTemp.positionX), CGFloat(50 * shipTemp.positionY), 50, 50))
+            let player1Grid = ShipMidDestroyed(frame: CGRectMake(CGFloat(50 * shipTemp.positionX), CGFloat(50 * shipTemp.positionY), 50, 50))
             player1Grid.updatePosition(shipTemp.positionX, newY: shipTemp.positionY)
             player1Grid.tag = shipTemp.shipID
             addSubview(player1Grid)
@@ -139,15 +140,12 @@ class BattleField: UIView{
         //Create ship tiles
         for var i = 0; i < game.player2Ships.count; i++ {
             let shipTemp = game.player2Ships[i]
-            let player2Grid = Player2Grid(frame: CGRectMake(frame.width/2 + CGFloat(50 * shipTemp.positionX) + 10, CGFloat(50 * shipTemp.positionY), 50, 50))
-            player2Grid.updatePosition(shipTemp.positionX, newY: shipTemp.positionY)
-            player2Grid.tag = shipTemp.shipID
-            addSubview(player2Grid)
+            createGridPlayer2(shipTemp)
         }
         //Create previous destroyed ships
         for var i = 0; i < game.player2DeadShips.count; i++ {
             let shipTemp = game.player2DeadShips[i]
-            let player2Grid = Player2GridDestroyed(frame: CGRectMake(frame.width/2 + CGFloat(50 * shipTemp.positionX) + 10, CGFloat(50 * shipTemp.positionY), 50, 50))
+            let player2Grid = ShipMidDestroyed(frame: CGRectMake(frame.width/2 + CGFloat(50 * shipTemp.positionX) + 10, CGFloat(50 * shipTemp.positionY), 50, 50))
             player2Grid.updatePosition(shipTemp.positionX, newY: shipTemp.positionY)
             player2Grid.tag = shipTemp.shipID
             addSubview(player2Grid)
@@ -161,11 +159,36 @@ class BattleField: UIView{
         }
     }
     
+    func createGridPlayer2(ship:Ship){
+        for var i = 0; i < ship.shipSize; i++ {
+            let offset = i * 50 + 10
+            let player2Grid = ShipMid(frame: CGRectMake(frame.width/2 + CGFloat(50 * ship.positionX) + CGFloat(offset), CGFloat(50 * ship.positionY), 50, 50))
+            player2Grid.updatePosition(ship.positionX, newY: ship.positionY)
+            player2Grid.tag = ship.shipID + (ship.shipSize * 200) + i
+            check.append(player2Grid.tag)
+            addSubview(player2Grid)
+        }
+    }
+    
+    func createGridPlayer1(ship:Ship){
+        for var i = 0; i < ship.shipSize; i++ {
+            let offset = i * 50
+            let player1Grid = ShipMid(frame: CGRectMake(CGFloat(50 * ship.positionX) + CGFloat(offset), CGFloat(50 * ship.positionY), 50, 50))
+            player1Grid.updatePosition(ship.positionX, newY: ship.positionY)
+            player1Grid.tag = ship.shipID + (ship.shipSize * 300) + i
+            check.append(player1Grid.tag)
+            addSubview(player1Grid)
+        }
+    }
+    
     //Hide all of player 1's ships when its player 2's turn
     func hideActivePlayer1Ships(){
         for var i = 0; i < game.player1Ships.count; i++ {
             let shipTemp = game.player1Ships[i]
-            viewWithTag(shipTemp.shipID)!.hidden = true
+            for var j = 0; j < shipTemp.shipSize; j++ {
+                let id = shipTemp.shipID + (shipTemp.shipSize * 300) + j
+                viewWithTag(id)!.hidden = true
+            }
         }
     }
     
@@ -173,7 +196,9 @@ class BattleField: UIView{
     func hideActivePlayer2Ships(){
         for var i = 0; i < game.player2Ships.count; i++ {
             let shipTemp = game.player2Ships[i]
-            viewWithTag(shipTemp.shipID)!.hidden = true
+            for var j = 0; j < shipTemp.shipSize; j++ {
+                viewWithTag(shipTemp.shipID + (shipTemp.shipSize * 200) + j)!.hidden = true
+            }
         }
     }
     
@@ -181,7 +206,9 @@ class BattleField: UIView{
     func showActivePlayer1Ships(){
         for var i = 0; i < game.player1Ships.count; i++ {
             let shipTemp = game.player1Ships[i]
-            viewWithTag(shipTemp.shipID)!.hidden = false
+            for var j = 0; j < shipTemp.shipSize; j++ {
+                viewWithTag(shipTemp.shipID + (shipTemp.shipSize * 300) + j)!.hidden = false
+            }
         }
     }
     
@@ -189,7 +216,9 @@ class BattleField: UIView{
     func showActivePlayer2Ships(){
         for var i = 0; i < game.player2Ships.count; i++ {
             let shipTemp = game.player2Ships[i]
-            viewWithTag(shipTemp.shipID)!.hidden = false
+            for var j = 0; j < shipTemp.shipSize; j++ {
+                viewWithTag(shipTemp.shipID + (shipTemp.shipSize * 200) + j)!.hidden = false
+            }
         }
     }
     
@@ -240,14 +269,14 @@ class BattleField: UIView{
             //Player 1 can only shoot at player 2 grid
             if x > 4{
                 if game.shootAt(Int(x), y: Int(y)){
-                    let destroyedTile = Player2GridDestroyed(frame: CGRectMake(CGFloat(50 * x) + 20, CGFloat(50 * y), 50, 50))
+                    let destroyedTile = ShipMidDestroyed(frame: CGRectMake(CGFloat(50 * x) + 20, CGFloat(50 * y), 50, 50))
                     addSubview(destroyedTile)
                     if game.player2Ships.isEmpty{
                         reportPlayer1Win()
                     }
                 }
                 else{
-                    let destroyedTile = WaterDestroyed(frame: CGRectMake(CGFloat(50 * x) + 20, CGFloat(50 * y), 50, 50))
+                    let destroyedTile = ShipMidDestroyed(frame: CGRectMake(CGFloat(50 * x) + 20, CGFloat(50 * y), 50, 50))
                     addSubview(destroyedTile)
                 }
                 print("Shoot point: (\(x), \(y))")
@@ -263,7 +292,7 @@ class BattleField: UIView{
             //Player 2 can only shoot at player 1 grid
             if x < 5{
                 if game.shootAt(Int(x), y: Int(y)){
-                    let destroyedTile = Player1GridDestroyed(frame: CGRectMake(CGFloat(50 * x), CGFloat(50 * y), 50, 50))
+                    let destroyedTile = ShipMidDestroyed(frame: CGRectMake(CGFloat(50 * x), CGFloat(50 * y), 50, 50))
                     addSubview(destroyedTile)
                     if game.player1Ships.isEmpty{
                         reportPlayer2Win()
