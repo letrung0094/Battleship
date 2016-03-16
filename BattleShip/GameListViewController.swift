@@ -90,8 +90,4 @@ class GameListViewController: UIViewController, UITableViewDelegate, UITableView
         newGameScreen.loadGame(game)
         navigationController?.pushViewController(newGameScreen, animated: true)
     }
-    
-    
-  
-    
 }

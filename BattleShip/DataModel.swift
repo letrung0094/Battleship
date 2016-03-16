@@ -104,7 +104,7 @@ class Game: NSObject, NSCoding{
         aCoder.encodeObject(player1Ships, forKey: "Player1Ships")
         aCoder.encodeObject(player2Ships, forKey: "Player2Ships")
         aCoder.encodeObject(player1DeadShips, forKey: "Player1DeadShips")
-        aCoder.encodeObject(player1DeadShips, forKey: "Player2DeadShips")
+        aCoder.encodeObject(player2DeadShips, forKey: "Player2DeadShips")
         aCoder.encodeObject(DestroyedPlayer1Tiles, forKey: "DestroyedPlayer1Tiles")
         aCoder.encodeObject(DestroyedPlayer2Tiles, forKey: "DestroyedPlayer2Tiles")
     }
