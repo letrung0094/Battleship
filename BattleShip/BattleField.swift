@@ -282,8 +282,8 @@ class BattleField: UIView{
         let touchPoint: CGPoint = touch.locationInView(self)
         
         //To get exact coordinates
-        var x = floor(touchPoint.x / 30.0)
-        var y = floor(touchPoint.y / 30.0)
+        let x = floor(touchPoint.x / 30.0)
+        let y = floor(touchPoint.y / 30.0)
         
         //Player 1 turn
         if game.turn == 0 && coverHidden == true && game.gameEnded == false {
