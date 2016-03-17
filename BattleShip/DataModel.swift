@@ -67,6 +67,11 @@ class GameCollection: NSObject, NSCoding{
     }
 }
 
+
+protocol GameDelegate: class{
+    func collection(collection: Game, shipSunk sunk: Int)
+}
+
 class Game: NSObject, NSCoding{
     
     //0 = player 1 turn, 1 = player 2 turn
@@ -74,8 +79,8 @@ class Game: NSObject, NSCoding{
     var gameID: Int!
     var player1Ships = [Ship]()
     var player2Ships = [Ship]()
-    var numberOfGridColumns = 6
-    var numberOfGridRows = 6
+    var numberOfGridColumns = 8
+    var numberOfGridRows = 8
     var gameEnded: Bool = false
     var gameWinner = 3 //cause encoder does not like nil
     var player1DeadShips = [Ship]()
@@ -84,6 +89,8 @@ class Game: NSObject, NSCoding{
     var DestroyedPlayer2Tiles = [Ship]()
     var shipPositionsPlayer1 = [Coordinates]()
     var shipPositionsPlayer2 = [Coordinates]()
+    
+    weak var delegate: GameDelegate?
     
     func createBattleField(){
         turn = 0
@@ -141,41 +148,66 @@ class Game: NSObject, NSCoding{
     //Update a missed shot or a destroyed ship and append to appropriate data structure
     func shootAt(x: Int, y: Int) -> Bool{
         if turn == 0{
+            let X = x - 1
             for var i = 0; i < player2Ships.count; i++ {
                 let temp = player2Ships[i]
-                if temp.positionX == x % 5 && temp.positionY == y % 5{
-                    player2Ships[i].life--
-                    if player2Ships[i].life == 0{
-                        player2DeadShips.append(temp)
-                        player2Ships.removeAtIndex(i)
+                
+                //Check if any portion of a ship is hit
+                for var j = 0; j < temp.shipSize; j++ {
+                    if (temp.positionX + j == X % 8 && temp.positionY == y % 8){
+                        //If hit, decrement the hit points
+                        player2Ships[i].life--
+                        
+                        //When hit points = 0 remove ship from game and append to destroyed ships
+                        if player2Ships[i].life == 0{
+                            player2DeadShips.append(temp)
+                            player2Ships.removeAtIndex(i)
+                            delegate?.collection(self, shipSunk: 2)
+                            switchTurn()
+                            return didHit()
+                        }
+                        
+                        delegate?.collection(self, shipSunk: 1)
+                        switchTurn()
+                        return didHit()
                     }
-                    switchTurn()
-                    return didHit()
+                    
                 }
             }
+            //If no hit, add shot to missed shots
             let missShot = Ship()
-            missShot.updatePosition(x, y: y)
+            missShot.updatePosition(X, y: y)
             DestroyedPlayer2Tiles.append(missShot)
             switchTurn()
+            delegate?.collection(self, shipSunk: 0)
             return false
         }
         else{
             for var i = 0; i < player1Ships.count; i++ {
                 let temp = player1Ships[i]
-                if temp.positionX == x && temp.positionY == y{
-                    player1Ships[i].life--
-                    if player1Ships[i].life == 0 {
-                        player1DeadShips.append(temp)
-                        player1Ships.removeAtIndex(i)
+                for var j = 0; j < temp.shipSize; j++ {
+                    if (temp.positionX + j == x && temp.positionY == y){
+                        player1Ships[i].life--
+                        if player1Ships[i].life == 0{
+                            player1DeadShips.append(temp)
+                            player1Ships.removeAtIndex(i)
+                            delegate?.collection(self, shipSunk: 2)
+                            switchTurn()
+                            return didHit()
+                        }
+                        
+                        delegate?.collection(self, shipSunk: 1)
+                        switchTurn()
+                        return didHit()
+                        
                     }
-                    switchTurn()
-                    return didHit()
                 }
             }
             let missShot = Ship()
             missShot.updatePosition(x, y: y)
             DestroyedPlayer1Tiles.append(missShot)
             switchTurn()
+            delegate?.collection(self, shipSunk: 0)
             return false
         }
         
@@ -187,20 +219,22 @@ class Game: NSObject, NSCoding{
         return true
     }
     
+    //Creates a ship of size 2
     func createShipSize2(forPlayer: Int){
         var coor2 = Coordinates()
         var coordinantes = Coordinates()
+        //0 = player 1
         if forPlayer == 0{
             turn = 0
             let ship = Ship()
             repeat{
-                ship.updatePosition(Int(arc4random_uniform(4)), y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(7)), y: Int(arc4random_uniform(8)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
                 coor2.positionX = ship.positionX + 1
                 coor2.positionY = ship.positionY
             }
-            while(validPosition1(coordinantes) == false && validPosition1(coor2) == false)
+            while(validPosition1(coordinantes) == false || validPosition1(coor2) == false)
             ship.shipID = generateID()
             ship.life = 2
             ship.shipSize = 2
@@ -209,17 +243,18 @@ class Game: NSObject, NSCoding{
             addNewShip(ship)
             
         }
+        //1 = player 2
         else{
             turn = 1
             let ship = Ship()
             repeat{
-                ship.updatePosition(Int(arc4random_uniform(4)), y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(7)), y: Int(arc4random_uniform(8)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
                 coor2.positionX = ship.positionX + 1
                 coor2.positionY = ship.positionY
             }
-            while(validPosition2(coordinantes) == false && validPosition2(coor2) == false)
+            while(validPosition2(coordinantes) == false || validPosition2(coor2) == false)
             ship.shipID = generateID()
             ship.life = 2
             ship.shipSize = 2
@@ -229,6 +264,7 @@ class Game: NSObject, NSCoding{
         }
     }
     
+    //Creates ship of size 3
     func createShipSize3(forPlayer: Int){
         var coor2 = Coordinates()
         var coor3 = Coordinates()
@@ -237,7 +273,7 @@ class Game: NSObject, NSCoding{
             turn = 0
             let ship = Ship()
             repeat{
-                ship.updatePosition(Int(arc4random_uniform(3)), y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(6)), y: Int(arc4random_uniform(8)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
                 coor2.positionX = ship.positionX + 1
@@ -245,7 +281,7 @@ class Game: NSObject, NSCoding{
                 coor3.positionY = ship.positionY
                 coor2.positionY = ship.positionY
             }
-            while(validPosition1(coordinantes) == false && validPosition1(coor2) == false && validPosition1(coor3) == false)
+            while(validPosition1(coordinantes) == false || validPosition1(coor2) == false || validPosition1(coor3) == false)
             ship.shipID = generateID()
             ship.life = 3
             ship.shipSize = 3
@@ -258,7 +294,7 @@ class Game: NSObject, NSCoding{
             turn = 1
             let ship = Ship()
             repeat{
-                ship.updatePosition(Int(arc4random_uniform(3)), y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(6)), y: Int(arc4random_uniform(8)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
                 coor2.positionX = ship.positionX + 1
@@ -266,7 +302,7 @@ class Game: NSObject, NSCoding{
                 coor3.positionY = ship.positionY
                 coor2.positionY = ship.positionY
             }
-            while(validPosition2(coordinantes) == false && validPosition2(coor2) == false && validPosition2(coor3) == false)
+            while(validPosition2(coordinantes) == false || validPosition2(coor2) == false || validPosition2(coor3) == false)
             ship.shipID = generateID()
             ship.life = 3
             ship.shipSize = 3
@@ -277,6 +313,7 @@ class Game: NSObject, NSCoding{
         }
     }
     
+    //Create ship of size 4
     func createShipSize4(forPlayer: Int){
         var coor4 = Coordinates()
         var coor2 = Coordinates()
@@ -286,7 +323,7 @@ class Game: NSObject, NSCoding{
             turn = 0
             let ship = Ship()
             repeat{
-                ship.updatePosition(Int(arc4random_uniform(2)), y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(5)), y: Int(arc4random_uniform(8)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
                 coor2.positionX = ship.positionX + 1
@@ -296,7 +333,7 @@ class Game: NSObject, NSCoding{
                 coor3.positionY = ship.positionY
                 coor2.positionY = ship.positionY
             }
-            while(validPosition1(coordinantes) == false && validPosition1(coor2) == false && validPosition1(coor3) == false && validPosition1(coor4) == false)
+            while(validPosition1(coordinantes) == false || validPosition1(coor2) == false || validPosition1(coor3) == false || validPosition1(coor4) == false)
             ship.shipID = generateID()
             ship.life = 4
             ship.shipSize = 4
@@ -311,7 +348,7 @@ class Game: NSObject, NSCoding{
             turn = 1
             let ship = Ship()
             repeat{
-                ship.updatePosition(Int(arc4random_uniform(2)), y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(5)), y: Int(arc4random_uniform(8)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
                 coor2.positionX = ship.positionX + 1
@@ -321,7 +358,7 @@ class Game: NSObject, NSCoding{
                 coor3.positionY = ship.positionY
                 coor2.positionY = ship.positionY
             }
-            while(validPosition2(coordinantes) == false && validPosition2(coor2) == false && validPosition2(coor3) == false && validPosition2(coor4) == false)
+            while(validPosition2(coordinantes) == false || validPosition2(coor2) == false || validPosition2(coor3) == false || validPosition2(coor4) == false)
             ship.shipID = generateID()
             ship.life = 4
             ship.shipSize = 4
@@ -333,6 +370,7 @@ class Game: NSObject, NSCoding{
         }
     }
     
+    //Create ship of size 5
     func createShipSize5(forPlayer: Int){
         var coor5 = Coordinates()
         var coor4 = Coordinates()
@@ -343,7 +381,7 @@ class Game: NSObject, NSCoding{
             turn = 0
             let ship = Ship()
             repeat{
-                ship.updatePosition(0, y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(4)), y: Int(arc4random_uniform(8)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
                 coor2.positionX = ship.positionX + 1
@@ -355,7 +393,7 @@ class Game: NSObject, NSCoding{
                 coor3.positionY = ship.positionY
                 coor2.positionY = ship.positionY
             }
-            while(validPosition1(coordinantes) == false && validPosition1(coor2) == false && validPosition1(coor3) == false && validPosition1(coor4) == false && validPosition1(coor5) == false)
+            while(validPosition1(coordinantes) == false || validPosition1(coor2) == false || validPosition1(coor3) == false || validPosition1(coor4) == false || validPosition1(coor5) == false)
             ship.shipID = generateID()
             ship.life = 5
             ship.shipSize = 5
@@ -371,7 +409,7 @@ class Game: NSObject, NSCoding{
             turn = 1
             let ship = Ship()
             repeat{
-                ship.updatePosition(0, y: Int(arc4random_uniform(5)))
+                ship.updatePosition(Int(arc4random_uniform(4)), y: Int(arc4random_uniform(8)))
                 coordinantes.positionX = ship.positionX
                 coordinantes.positionY = ship.positionY
                 coor2.positionX = ship.positionX + 1
@@ -380,8 +418,10 @@ class Game: NSObject, NSCoding{
                 coor4.positionY = ship.positionY
                 coor3.positionY = ship.positionY
                 coor2.positionY = ship.positionY
+                coor5.positionX = ship.positionX + 4
+                coor5.positionY = ship.positionY
             }
-            while(validPosition2(coordinantes) == false && validPosition2(coor2) == false && validPosition2(coor3) == false && validPosition2(coor4) == false && validPosition2(coor5) == false)
+            while(validPosition2(coordinantes) == false || validPosition2(coor2) == false || validPosition2(coor3) == false || validPosition2(coor4) == false || validPosition2(coor5) == false)
             ship.shipID = generateID()
             ship.life = 5
             ship.shipSize = 5
@@ -399,16 +439,19 @@ class Game: NSObject, NSCoding{
         for var i = 0; i < shipPositionsPlayer1.count; i++ {
             let temp = shipPositionsPlayer1[i]
             if temp.positionX == coord.positionX && temp.positionY == coord.positionY{
+                print("Invalid location 1")
                 return false
             }
         }
         return true
     }
     
+    //If coordinate location already exists, return false
     func validPosition2(coord: Coordinates)->Bool{
         for var i = 0; i < shipPositionsPlayer2.count; i++ {
             let temp = shipPositionsPlayer2[i]
             if temp.positionX == coord.positionX && temp.positionY == coord.positionY{
+                print("Invalid location 2")
                 return false
             }
             
@@ -416,6 +459,7 @@ class Game: NSObject, NSCoding{
         return true
     }
     
+    //Generate a random unique id
     func generateID() -> Int{
         var temp = Int(arc4random_uniform(UInt32.max))
         var check: Bool
@@ -438,8 +482,6 @@ class Game: NSObject, NSCoding{
         
         return temp
     }
-    
-  
     
     //Add a new ship
     func addNewShip(newShip: Ship){

@@ -19,16 +19,15 @@ class BattleField: UIView{
     var coverHidden: Bool = false
     var check = [Int]()
     var audioPlayer = AVAudioPlayer()
+    var message = ""
     let bombSound = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("Explosion", ofType: "mp3")!)
+    
 
     override func drawRect(rect:CGRect){
         super.drawRect(rect)
         
         createPlayer1Grid()
         createPlayer2Grid()
-        
-        print(frame.height)
-        print(frame.width)
         
         //Start at player 1 turn
         if game.turn == 0{
@@ -54,7 +53,6 @@ class BattleField: UIView{
             }
         }
         
-        
         //Set sound
         print(bombSound)
         
@@ -75,6 +73,7 @@ class BattleField: UIView{
             let color = UIColor(red: 38.0/255.0, green: 191.0/255.0, blue: 199.0/255.0, alpha: 1.0)
             cover.backgroundColor = color
             cover.setText(s)
+            cover.setText2(message)
             cover.tag = 1000
         }
         else{
@@ -84,7 +83,9 @@ class BattleField: UIView{
             let color = UIColor(red: 38.0/255.0, green: 191.0/255.0, blue: 199.0/255.0, alpha: 1.0)
             cover.backgroundColor = color
             cover.setText(s)
+            cover.setText2(message)
             cover.tag = 1000
+            
         }
         
         addSubview(cover)
@@ -98,9 +99,9 @@ class BattleField: UIView{
     //Create water tiles and ship tiles for player 1
     func createPlayer1Grid(){
         //Create water tiles
-        for var i = 0; i < 5; i++ {
-            for var j = 0; j < 5; j++ {
-                let waterGrid = Grid(frame: CGRectMake(CGFloat(50 * i), CGFloat(50 * j), 50, 50))
+        for var i = 0; i < 8; i++ {
+            for var j = 0; j < 8; j++ {
+                let waterGrid = Grid(frame: CGRectMake(CGFloat(30 * i), CGFloat(30 * j), 30, 30))
                 waterGrid.updatePosition(i, newY: j)
                 addSubview(waterGrid)
             }
@@ -113,15 +114,12 @@ class BattleField: UIView{
         //Create previous destroyed ships
         for var i = 0; i < game.player1DeadShips.count; i++ {
             let shipTemp = game.player1DeadShips[i]
-            let player1Grid = ShipMidDestroyed(frame: CGRectMake(CGFloat(50 * shipTemp.positionX), CGFloat(50 * shipTemp.positionY), 50, 50))
-            player1Grid.updatePosition(shipTemp.positionX, newY: shipTemp.positionY)
-            player1Grid.tag = shipTemp.shipID
-            addSubview(player1Grid)
+            createDestroyedShipsPlayer1(shipTemp)
         }
         //Create destroyed water tiles
         for var i = 0; i < game.DestroyedPlayer1Tiles.count; i++ {
             let waterTemp = game.DestroyedPlayer1Tiles[i]
-            let waterGrid = WaterDestroyed(frame: CGRectMake(CGFloat(50 * waterTemp.positionX), CGFloat(50 * waterTemp.positionY), 50, 50))
+            let waterGrid = WaterDestroyed(frame: CGRectMake(CGFloat(30 * waterTemp.positionX), CGFloat(30 * waterTemp.positionY), 30, 30))
             waterGrid.updatePosition(waterTemp.positionX, newY: waterTemp.positionY)
             addSubview(waterGrid)
         }
@@ -130,9 +128,9 @@ class BattleField: UIView{
     //Create water tiles and ship tiles for player 2
     func createPlayer2Grid(){
         //Create water tiles
-        for var i = 0; i < 5; i++ {
-            for var j = 0; j < 5; j++ {
-                let waterGrid = Grid(frame: CGRectMake(frame.width/2 + CGFloat(50 * i) + 10, CGFloat(50 * j), 50, 50))
+        for var i = 0; i < 8; i++ {
+            for var j = 0; j < 8; j++ {
+                let waterGrid = Grid(frame: CGRectMake(frame.width/2 + CGFloat(30 * i) + 20, CGFloat(30 * j), 30, 30))
                 waterGrid.updatePosition(i, newY: j)
                 addSubview(waterGrid)
             }
@@ -145,24 +143,34 @@ class BattleField: UIView{
         //Create previous destroyed ships
         for var i = 0; i < game.player2DeadShips.count; i++ {
             let shipTemp = game.player2DeadShips[i]
-            let player2Grid = ShipMidDestroyed(frame: CGRectMake(frame.width/2 + CGFloat(50 * shipTemp.positionX) + 10, CGFloat(50 * shipTemp.positionY), 50, 50))
-            player2Grid.updatePosition(shipTemp.positionX, newY: shipTemp.positionY)
-            player2Grid.tag = shipTemp.shipID
-            addSubview(player2Grid)
+            createDestroyedShipsPlayer2(shipTemp)
         }
         //Create destroyed water tiles
         for var i = 0; i < game.DestroyedPlayer2Tiles.count; i++ {
             let waterTemp = game.DestroyedPlayer2Tiles[i]
-            let waterGrid = WaterDestroyed(frame: CGRectMake(CGFloat(50 * waterTemp.positionX) + 10, CGFloat(50 * waterTemp.positionY) + 10, 50, 50))
+            let waterGrid = WaterDestroyed(frame: CGRectMake(CGFloat(30 * waterTemp.positionX) + 20, CGFloat(30 * waterTemp.positionY), 30, 30))
             waterGrid.updatePosition(waterTemp.positionX, newY: waterTemp.positionY)
             addSubview(waterGrid)
         }
     }
     
-    func createGridPlayer2(ship:Ship){
+    //Create ships of various sizes for player 1
+    func createDestroyedShipsPlayer1(ship:Ship){
         for var i = 0; i < ship.shipSize; i++ {
-            let offset = i * 50 + 10
-            let player2Grid = ShipMid(frame: CGRectMake(frame.width/2 + CGFloat(50 * ship.positionX) + CGFloat(offset), CGFloat(50 * ship.positionY), 50, 50))
+            let offset = i * 30
+            let player1Grid = ShipMidDestroyed(frame: CGRectMake(CGFloat(30 * ship.positionX) + CGFloat(offset), CGFloat(30 * ship.positionY), 30, 30))
+            player1Grid.updatePosition(ship.positionX, newY: ship.positionY)
+            player1Grid.tag = ship.shipID + (ship.shipSize * 300) + i
+            check.append(player1Grid.tag)
+            addSubview(player1Grid)
+        }
+    }
+    
+    //Create destroyed portions of ships of various sizes for player 1
+    func createDestroyedShipsPlayer2(ship:Ship){
+        for var i = 0; i < ship.shipSize; i++ {
+            let offset = i * 30 + 20
+            let player2Grid = ShipMidDestroyed(frame: CGRectMake(frame.width/2 + CGFloat(30 * ship.positionX) + CGFloat(offset), CGFloat(30 * ship.positionY), 30, 30))
             player2Grid.updatePosition(ship.positionX, newY: ship.positionY)
             player2Grid.tag = ship.shipID + (ship.shipSize * 200) + i
             check.append(player2Grid.tag)
@@ -170,10 +178,23 @@ class BattleField: UIView{
         }
     }
     
+    //Create ships of various sizes for player 2
+    func createGridPlayer2(ship:Ship){
+        for var i = 0; i < ship.shipSize; i++ {
+            let offset = i * 30 + 20
+            let player2Grid = ShipMid(frame: CGRectMake(frame.width/2 + CGFloat(30 * ship.positionX) + CGFloat(offset), CGFloat(30 * ship.positionY), 30, 30))
+            player2Grid.updatePosition(ship.positionX, newY: ship.positionY)
+            player2Grid.tag = ship.shipID + (ship.shipSize * 200) + i
+            check.append(player2Grid.tag)
+            addSubview(player2Grid)
+        }
+    }
+    
+    //Create ships of various sizes for player 1
     func createGridPlayer1(ship:Ship){
         for var i = 0; i < ship.shipSize; i++ {
-            let offset = i * 50
-            let player1Grid = ShipMid(frame: CGRectMake(CGFloat(50 * ship.positionX) + CGFloat(offset), CGFloat(50 * ship.positionY), 50, 50))
+            let offset = i * 30
+            let player1Grid = ShipMid(frame: CGRectMake(CGFloat(30 * ship.positionX) + CGFloat(offset), CGFloat(30 * ship.positionY), 30, 30))
             player1Grid.updatePosition(ship.positionX, newY: ship.positionY)
             player1Grid.tag = ship.shipID + (ship.shipSize * 300) + i
             check.append(player1Grid.tag)
@@ -261,22 +282,22 @@ class BattleField: UIView{
         let touchPoint: CGPoint = touch.locationInView(self)
         
         //To get exact coordinates
-        let x = floor(touchPoint.x / 50.0)
-        let y = floor(touchPoint.y / 50.0)
+        var x = floor(touchPoint.x / 30.0)
+        var y = floor(touchPoint.y / 30.0)
         
         //Player 1 turn
         if game.turn == 0 && coverHidden == true && game.gameEnded == false {
             //Player 1 can only shoot at player 2 grid
-            if x > 4{
+            if x > 7{
                 if game.shootAt(Int(x), y: Int(y)){
-                    let destroyedTile = ShipMidDestroyed(frame: CGRectMake(CGFloat(50 * x) + 20, CGFloat(50 * y), 50, 50))
+                    let destroyedTile = ShipMidDestroyed(frame: CGRectMake(CGFloat(30 * x) + 10, CGFloat(30 * y), 30, 30))
                     addSubview(destroyedTile)
                     if game.player2Ships.isEmpty{
                         reportPlayer1Win()
                     }
                 }
                 else{
-                    let destroyedTile = ShipMidDestroyed(frame: CGRectMake(CGFloat(50 * x) + 20, CGFloat(50 * y), 50, 50))
+                    let destroyedTile = WaterDestroyed(frame: CGRectMake(CGFloat(30 * x) + 10, CGFloat(30 * y), 30, 30))
                     addSubview(destroyedTile)
                 }
                 print("Shoot point: (\(x), \(y))")
@@ -290,16 +311,16 @@ class BattleField: UIView{
         //Player 2 turn
         else if game.turn == 1 && coverHidden == true && game.gameEnded == false {
             //Player 2 can only shoot at player 1 grid
-            if x < 5{
+            if x < 8{
                 if game.shootAt(Int(x), y: Int(y)){
-                    let destroyedTile = ShipMidDestroyed(frame: CGRectMake(CGFloat(50 * x), CGFloat(50 * y), 50, 50))
+                    let destroyedTile = ShipMidDestroyed(frame: CGRectMake(CGFloat(30 * x), CGFloat(30 * y), 30, 30))
                     addSubview(destroyedTile)
                     if game.player1Ships.isEmpty{
                         reportPlayer2Win()
                     }
                 }
                 else{
-                    let destroyedTile = WaterDestroyed(frame: CGRectMake(CGFloat(50 * x), CGFloat(50 * y), 50, 50))
+                    let destroyedTile = WaterDestroyed(frame: CGRectMake(CGFloat(30 * x), CGFloat(30 * y), 30, 30))
                     addSubview(destroyedTile)
                 }
                 print("Shoot point: (\(x), \(y))")
@@ -310,6 +331,7 @@ class BattleField: UIView{
                 validTouch = false
             }
         }
+        //For dealing with getting rid of the cover sheet
         else{
             validTouch = false
             cover.hidden = true
