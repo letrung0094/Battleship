@@ -10,17 +10,19 @@ import Foundation
 import UIKit
 
 protocol GameViewDelegate: class{
-    func collection(collection: GameViewController, getGame game: Game)
 }
 
 class GameViewController: UIViewController, GameDelegate{
     
     var currentGame: Game!
+    var currentGameInfo: GameInfo!
     var numberOfColumns: Int = 5
     var numberOfRows: Int = 5
     var field: BattleField!
     var newGameID: Int!
     var label: UILabel!
+    var currentPlayer: Player!
+
     
     weak var delegate: GameViewDelegate?
     
@@ -42,7 +44,6 @@ class GameViewController: UIViewController, GameDelegate{
         else if sunk == 2{
             field.message = "Hit and Ship Sunk!"
         }
-        
     }
 
     //Set up view
@@ -53,10 +54,7 @@ class GameViewController: UIViewController, GameDelegate{
         //Force landscape orientation
         let value = UIInterfaceOrientation.LandscapeLeft.rawValue
         UIDevice.currentDevice().setValue(value, forKey: "orientation")
-        
-        if currentGame == nil {
-            createNewGame(newGameID)
-        }
+ 
         createField()
         label = UILabel(frame: CGRect(x: 250, y: 280,  width: 200.0, height: 20.0))
         label.hidden = true
@@ -71,8 +69,8 @@ class GameViewController: UIViewController, GameDelegate{
     
     //Create the field and load in a previous game
     func createField(){
-        field = BattleField(frame: CGRectMake(20, 50, 520, 240))
-        field.loadGame(currentGame)
+        field = BattleField(frame: CGRectMake(20, 50, 520, 250))
+        field.loadGame(currentGameInfo, player: currentPlayer)
         field.backgroundColor = UIColor.brownColor()
         view.addSubview(field)
     }
@@ -80,8 +78,6 @@ class GameViewController: UIViewController, GameDelegate{
     //Call delegate to add to table view data source
     override func viewDidDisappear(animated: Bool) {
         print("Leaving game view")
-        currentGame = field.getGameStatus()
-        delegate?.collection(self, getGame: currentGame)
     }
     
     override func shouldAutorotate() -> Bool {
@@ -89,17 +85,14 @@ class GameViewController: UIViewController, GameDelegate{
     }
     
     //Load in an old game
-    func loadGame(oldGame: Game){
-        currentGame = oldGame
+    func loadGame(oldGame: GameInfo, player: Player){
+        currentPlayer = player
+        currentGameInfo = oldGame
     }
     
     //Creates a brand new game
     func createNewGame(newGameID: Int){
-        currentGame = Game()
-        currentGame.gameID = newGameID
-        currentGame.createBattleField()
-        currentGame.turn = 0
-        currentGame.delegate = self
+        
     }
     
 }

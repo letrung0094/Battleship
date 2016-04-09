@@ -10,6 +10,74 @@
 import Foundation
 import UIKit
 
+//CLASSES FOR NETWORK BATTLESHIP
+
+class Player: NSObject, NSCoding{
+    var playerName: String!
+    var playerID: String!
+    
+    override init() {
+        super.init()
+    }
+    
+    //Encode data
+    func encodeWithCoder(aCoder: NSCoder) {
+        aCoder.encodeObject(playerName, forKey: "playerName")
+        aCoder.encodeObject(playerID, forKey: "playerID")
+    }
+    
+    //Decode data
+    required init?(coder aDecoder: NSCoder) {
+        playerName = aDecoder.decodeObjectForKey("playerName") as! String
+        playerID = aDecoder.decodeObjectForKey("playerID") as! String
+    }
+    
+}
+
+class gameInfoCollection {
+    var listOfActiveGames = [GameInfo]()
+    
+    var gamesCount: Int{
+        return listOfActiveGames.count
+    }
+    
+    func addGame(newGame: GameInfo){
+        listOfActiveGames.append(newGame)
+    }
+    
+    func accessGame(gameID: Int) -> GameInfo{
+        let gameToReturn = listOfActiveGames[gameID]
+        return gameToReturn
+    }
+}
+
+//Used to model pixio API
+class GameInfo {
+    var name: String!
+    var id: String!
+    var status: String!
+    
+    
+    func setGameVariables(n: String, i: String, s: String){
+        name = n
+        id = i
+        status = s
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//CLASSES FOR LOCAl BATTLESHIP BELOW
+
 class GameCollection: NSObject, NSCoding{
     
     override init() {
@@ -94,19 +162,19 @@ class Game: NSObject, NSCoding{
     
     func createBattleField(){
         turn = 0
-        //Create ships for player 1
-        createShipSize2(0)
-        createShipSize3(0)
-        createShipSize3(0)
-        createShipSize4(0)
-        createShipSize5(0)
-        
-        //Create ships for player 2
-        createShipSize2(1)
-        createShipSize3(1)
-        createShipSize3(1)
-        createShipSize4(1)
-        createShipSize5(1)
+//        //Create ships for player 1
+//        createShipSize2(0)
+//        createShipSize3(0)
+//        createShipSize3(0)
+//        createShipSize4(0)
+//        createShipSize5(0)
+//        
+//        //Create ships for player 2
+//        createShipSize2(1)
+//        createShipSize3(1)
+//        createShipSize3(1)
+//        createShipSize4(1)
+//        createShipSize5(1)
     }
     
     override init() {

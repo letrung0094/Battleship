@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		917016BC1CA8A79400AFDE8E /* NetworkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917016BB1CA8A79400AFDE8E /* NetworkController.swift */; };
 		91BA59001C94F6D3007CA4B7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BA58FF1C94F6D3007CA4B7 /* AppDelegate.swift */; };
 		91BA59071C94F6D3007CA4B7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91BA59061C94F6D3007CA4B7 /* Assets.xcassets */; };
 		91BA59151C94F6D3007CA4B7 /* BattleShipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BA59141C94F6D3007CA4B7 /* BattleShipTests.swift */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		917016BB1CA8A79400AFDE8E /* NetworkController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkController.swift; sourceTree = "<group>"; };
 		91BA58FC1C94F6D3007CA4B7 /* BattleShip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BattleShip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91BA58FF1C94F6D3007CA4B7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		91BA59061C94F6D3007CA4B7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				91BA59311C94FD27007CA4B7 /* GameViewController.swift */,
 				91EE56AA1C960D5000E3D949 /* BattleField.swift */,
 				91EE56AC1C963DC800E3D949 /* CoverSheet.swift */,
+				917016BB1CA8A79400AFDE8E /* NetworkController.swift */,
 			);
 			path = BattleShip;
 			sourceTree = "<group>";
@@ -276,6 +279,7 @@
 				91BA59321C94FD27007CA4B7 /* GameViewController.swift in Sources */,
 				91BA59001C94F6D3007CA4B7 /* AppDelegate.swift in Sources */,
 				91BA59301C94FCE4007CA4B7 /* GameListViewController.swift in Sources */,
+				917016BC1CA8A79400AFDE8E /* NetworkController.swift in Sources */,
 				91BA592E1C94FCD6007CA4B7 /* DataModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
